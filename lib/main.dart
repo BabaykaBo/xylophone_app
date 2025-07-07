@@ -14,7 +14,7 @@ class XylophonePage extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: Colors.blue[300],
-        body: SafeArea(child: XylophoneWidget()),
+        body: const SafeArea(child: XylophoneWidget()),
         appBar: AppBar(
           title: const Text(
             'Xylophone App',
@@ -43,32 +43,31 @@ class XylophoneWidget extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children:
-                [
-                  [1, Colors.purple],
-                  [2, Colors.blue],
-                  [3, Colors.blue.shade200],
-                  [4, Colors.green],
-                  [5, Colors.yellow],
-                  [6, Colors.orange],
-                  [7, Colors.red],
-                ].map((list) {
-                  final number = list[0] as int;
-                  final color = list[1] as Color;
-                  return Expanded(
-                    child: XylophoneButton(
-                      player: player,
-                      number: number,
-                      color: color,
-                    ),
-                  );
-                }).toList(),
+            children: _getXylophoneButtons(player),
           ),
         ),
       ),
     );
   }
+
+  List<XylophoneButton> _getXylophoneButtons(AudioPlayer player) {
+    return const <_XylophoneParams>[
+      (1, Colors.purple),
+      (2, Colors.blue),
+      (3, Colors.lightBlueAccent),
+      (4, Colors.green),
+      (5, Colors.yellow),
+      (6, Colors.orange),
+      (7, Colors.red),
+    ].map((record) {
+      final number = record.$1;
+      final color = record.$2;
+      return XylophoneButton(player: player, number: number, color: color);
+    }).toList();
+  }
 }
+
+typedef _XylophoneParams = (int, Color);
 
 class XylophoneButton extends StatelessWidget {
   const XylophoneButton({
@@ -84,17 +83,19 @@ class XylophoneButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: FilledButton(
-        onPressed: () {
-          player.play(AssetSource('note$number.wav'));
-        },
-        style: ButtonStyle(
-          backgroundColor: WidgetStateProperty.all(color),
-          minimumSize: WidgetStateProperty.all(const Size(200, 50)),
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.0),
+        child: FilledButton(
+          onPressed: () {
+            player.play(AssetSource('note$number.wav'));
+          },
+          style: ButtonStyle(
+            backgroundColor: WidgetStateProperty.all(color),
+            minimumSize: WidgetStateProperty.all(const Size(200, 50)),
+          ),
+          child: null,
         ),
-        child: null,
       ),
     );
   }
